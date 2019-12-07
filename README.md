@@ -31,7 +31,7 @@ subscribe ccr-open-coldfront-list@listserv.buffalo.edu first_name last_name
 
 ## Quick Install
 
-1. ColdFront requires Python 3.6, memcached, and redis. 
+1. ColdFront requires Python 3.6.
 
 ### CentOS (7.5)
 
@@ -39,14 +39,14 @@ Install EPEL then install required packages:
 
 ```
 sudo yum install epel-release
-sudo yum install python36 python36-devel memcached redis
+sudo yum install python36 python36-devel
 ``` 
 
 ### Ubuntu (16.04)
 ```
 sudo add-apt-repository ppa:jonathonf/python-3.6
 sudo apt-get update
-sudo apt-get install python3.6 python3.6-venv memcached redis-server
+sudo apt-get install python3.6 python3.6-venv
 ``` 
 
 2. Clone ColdFront in a new directory and create a Python virtual environment for ColdFront
