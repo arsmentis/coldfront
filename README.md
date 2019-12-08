@@ -87,6 +87,11 @@ python manage.py load_test_data
 ```
 
 8. Start development server
+to serve to localhost only:
+```
+python manage.py runserver
+```
+or to serve to all:
 ```
 python manage.py runserver 0.0.0.0:8000
 ```
