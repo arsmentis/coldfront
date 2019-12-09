@@ -16,7 +16,7 @@ SECRET_KEY = 'vtri&lztlbinerr4+yg1yzm23ez@+ub6=4*63z1%d!)fg(g4x$' # REPLACE
 DEBUG = True
 DEVELOP = True
 
-if DEBUG is False and SECRET_KEY is 'vtri&lztlbinerr4+yg1yzm23ez@+ub6=4*63z1%d!)fg(g4x$':
+if not DEBUG and SECRET_KEY == 'vtri&lztlbinerr4+yg1yzm23ez@+ub6=4*63z1%d!)fg(g4x$':
     from django.core.exceptions import ImproperlyConfigured
     raise ImproperlyConfigured("The SECRET_KEY setting is using the preset value. Please update it!")
 
