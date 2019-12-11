@@ -1,8 +1,17 @@
 # TODO: is there a standard LABEL for this comment?
 # originally designed for Docker version: 18.09.1
 
+## TODO: should base use debian? perhaps alpine+debian for testing?
+# per https://hub.docker.com/_/python/?tab=description
+# potential rationale:
+#     debian vs. alpine: use different libc implementations
+#     debian - glibc
+#     alpine - musl
+# overly loooooong comment thread for pro/cons:
+#     https://news.ycombinator.com/item?id=10782897
+#
 # 3 means latest 3.x
-ARG PYTHON_TAG_VERSION=3
+ARG PYTHON_TAG=3-alpine
 # pin wheel version to mitigate cache incongruencies
 #     TODO: CI check to assure this is latest
 ARG WHEEL_VERSION=0.33.6
@@ -27,15 +36,7 @@ ARG COLDFRONT_UID_GID=1984
 # default-target  - readability alias, for (see EOF)
 
 
-## TODO: should base use debian? perhaps alpine+debian for testing?
-# per https://hub.docker.com/_/python/?tab=description
-# potential rationale:
-#     debian vs. alpine: use different libc implementations
-#     debian - glibc
-#     alpine - musl
-# overly loooooong comment thread for pro/cons:
-#     https://news.ycombinator.com/item?id=10782897
-FROM python:${PYTHON_TAG_VERSION}-alpine AS base-python
+FROM python:${PYTHON_TAG} AS base-python
 
 
 FROM base-python AS installed
