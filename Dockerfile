@@ -25,6 +25,7 @@ RUN pip install --user --no-cache-dir -r requirements.txt
 COPY . \
      ./
 
+## with sample config
 COPY ./coldfront/config/local_strings.py.sample \
      ./coldfront/config/local_strings.py
 COPY ./coldfront/config/local_settings.py.sample \
