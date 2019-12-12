@@ -26,20 +26,12 @@ ARG COLDFRONT_USER=django
 ARG COLDFRONT_UID_GID=1984
 
 
-### build stages defined (FROM <prevbase> AS <stage>):
-# base-python     - convenience stage to make redefining a build arg
-# installed       - minimal installation (e.g. lacking settings, not initialized)
-# sample          - uses sample settings and test data
-# release         - TODO; currently same as sample
-# test            - TODO; currently same as sample
-# dev-env         - currently alias for sample
-# default-target  - readability alias, for (see EOF)
-
-
+# base python image is specified via build arg
 FROM python:${PYTHON_TAG} AS base-python
 
 
-FROM base-python AS installed
+FROM base-python
+
 ARG WHEEL_VERSION
 ARG COLDFRONT_DIR
 ARG COLDFRONT_USER
@@ -77,8 +69,6 @@ COPY --chown=django \
      . \
      ./
 
-
-FROM installed AS sample
 COPY --chown=django \
      ./coldfront/config/local_strings.py.sample \
      ./coldfront/config/local_strings.py
@@ -86,8 +76,6 @@ COPY --chown=django \
      ./coldfront/config/local_settings.py.sample \
      ./coldfront/config/local_settings.py
 
-# TODO: refactor so there won't be redundant install/Dockerfile DIRECTIVES
-#       after coldfront settings
 RUN ./manage.py initial_setup
 RUN ./manage.py load_test_data
 
@@ -95,11 +83,3 @@ EXPOSE 80
 # TODO: ENTRYPOINT w/ helper script (see best practices)
 #       would be roughly: ENTRYPOINT ./docker-entrypoint.sh
 CMD ./manage.py runserver
-
-
-# TODO: different targets for different use cases; currently all the same
-FROM sample AS release
-FROM sample AS test
-FROM sample AS dev-env
-
-FROM dev-env AS default-target
