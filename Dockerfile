@@ -39,7 +39,7 @@ COPY ./coldfront/config/local_settings.py.sample \
 RUN ./manage.py initial_setup
 RUN ./manage.py load_test_data
 
-EXPOSE 80
+EXPOSE 8000
 # TODO: ENTRYPOINT w/ helper script (see best practices)
 #       would be roughly: ENTRYPOINT ./docker-entrypoint.sh
 CMD ./manage.py runserver
