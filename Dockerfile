@@ -1,6 +1,11 @@
 # originally designed for Docker version: 18.09.1
 
+# NOTE: This build arg allows for convenient flexibility in changing the base
+#       image, but development and testing has only occurred with the default
+#       below
+#
 # 3 means latest 3.x
+# (at time of writing, equivalent to 3.8-alpine)
 ARG PYTHON_TAG=3-alpine
 
 # largely arbitrary
