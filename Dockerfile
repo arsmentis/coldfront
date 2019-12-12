@@ -2,9 +2,6 @@
 
 # 3 means latest 3.x
 ARG PYTHON_TAG=3-alpine
-# pin wheel version to mitigate cache incongruencies
-#     TODO: CI check to assure this is latest
-ARG WHEEL_VERSION=0.33.6
 
 # these are largely arbitrary
 ARG COLDFRONT_DIR=/usr/src/app
@@ -22,13 +19,9 @@ FROM python:${PYTHON_TAG} AS base-python
 
 FROM base-python
 
-ARG WHEEL_VERSION
 ARG COLDFRONT_DIR
 ARG COLDFRONT_USER
 ARG COLDFRONT_UID_GID
-
-# optimize build cache slightly, for wheel
-RUN pip install --no-cache-dir wheel=="${WHEEL_VERSION}"
 
 ## set up user:group, umask, workdir, drop root
 RUN addgroup --gid "${COLDFRONT_UID_GID}" "${COLDFRONT_USER}" \
