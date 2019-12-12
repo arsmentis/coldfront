@@ -42,4 +42,4 @@ RUN ./manage.py load_test_data
 EXPOSE 8000
 # TODO: ENTRYPOINT w/ helper script (see best practices)
 #       would be roughly: ENTRYPOINT ./docker-entrypoint.sh
-CMD ./manage.py runserver
+CMD ./manage.py runserver 0.0.0.0:8000
