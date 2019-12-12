@@ -1,15 +1,5 @@
-# TODO: is there a standard LABEL for this comment?
 # originally designed for Docker version: 18.09.1
 
-## TODO: should base use debian? perhaps alpine+debian for testing?
-# per https://hub.docker.com/_/python/?tab=description
-# potential rationale:
-#     debian vs. alpine: use different libc implementations
-#     debian - glibc
-#     alpine - musl
-# overly loooooong comment thread for pro/cons:
-#     https://news.ycombinator.com/item?id=10782897
-#
 # 3 means latest 3.x
 ARG PYTHON_TAG=3-alpine
 # pin wheel version to mitigate cache incongruencies
@@ -64,7 +54,6 @@ COPY --chown=django \
 RUN pip install --user --no-cache-dir -r requirements.txt
 
 ## coldfront app files w/o config
-# TODO: .dockerignore (~.gitignore'd files + a few more)
 COPY --chown=django \
      . \
      ./
