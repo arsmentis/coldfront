@@ -3,18 +3,20 @@ import itertools
 from unittest.mock import Mock, sentinel, patch
 import bibtexparser.bibdatabase
 import bibtexparser.bparser
-from django.test import TestCase
+from django.test import TestCase, RequestFactory
+from django.urls import reverse
 import doi2bib
 
 from coldfront.core.test_helpers.factories import (
     ProjectFactory,
     PublicationSourceFactory,
+    SuperuserFactory,
 )
 from coldfront.core.test_helpers.decorators import (
     makes_remote_requests,
 )
-from coldfront.core.publication.models import Publication
-from coldfront.core.publication.views import PublicationSearchResultView
+from coldfront.core.publication.models import Publication, PublicationSource
+from coldfront.core.publication.views import PublicationSearchResultView, PublicationAddManuallyView
 import coldfront.core.publication
 
 
@@ -229,3 +231,38 @@ class TestDataRetrieval(TestCase):
                 with mocks.patch():
                     retrieved_data = self.run_target_method(unique_id)
                 self.assertEqual(expected_data, retrieved_data)
+
+
+class TestPublicationAddManuallyView(TestCase):
+    class Data:
+        """Collection of test data, separated for readability"""
+
+        def __init__(self):
+            self.project = ProjectFactory()
+            self.superuser = SuperuserFactory()
+            self.source = PublicationSource.objects.get(name='manual')
+
+    def setUp(self):
+        self.data = self.Data()
+
+    def test_add_publication_manually(self):
+        url = reverse('add-publication-manually', kwargs={'project_pk': self.data.project.pk})
+        post_fields = {
+            'title': 'Something on the web',
+            'author': 'Somebody',
+            'year': '2001',
+            'journal': 'Popular Science',
+        }
+
+        request = RequestFactory.post(
+            url,
+            post_fields,
+            content_type='multipart/form-data',
+        )  # this fails -- AttributeError: 'str' object has no attribute '_encode_json'
+        request.user = self.data.superuser
+        PublicationAddManuallyView(request)
+        
+        all_pubs = Publication.objects.all()
+        self.assertEqual(1, len(all_pubs))
+
+        # more to come

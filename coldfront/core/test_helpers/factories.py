@@ -17,6 +17,14 @@ class UserFactory(DjangoModelFactory):
         model = User
 
 
+class SuperuserFactory(DjangoModelFactory):
+    class Meta:
+        model = User
+
+    username = 'admin'
+    is_superuser = True
+
+
 class FieldOfScienceFactory(DjangoModelFactory):
     class Meta:
         model = FieldOfScience
