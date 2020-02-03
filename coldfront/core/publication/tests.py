@@ -254,14 +254,14 @@ class TestPublicationAddManuallyView(TestCase):
             'journal': 'Popular Science',
         }
 
-        request = RequestFactory.post(
+        request = RequestFactory().post(
             url,
             post_fields,
-            content_type='multipart/form-data',
-        )  # this fails -- AttributeError: 'str' object has no attribute '_encode_json'
+        )
         request.user = self.data.superuser
-        PublicationAddManuallyView(request)
-        
+        view = PublicationAddManuallyView.as_view()
+        response = view(request)
+
         all_pubs = Publication.objects.all()
         self.assertEqual(1, len(all_pubs))
 
