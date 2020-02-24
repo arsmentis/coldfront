@@ -1,10 +1,11 @@
 from django.contrib import admin
+from simple_history.admin import SimpleHistoryAdmin
 
 from coldfront.core.field_of_science.models import FieldOfScience
 
 
 @admin.register(FieldOfScience)
-class FieldOfScienceAdmin(admin.ModelAdmin):
+class FieldOfScienceAdmin(SimpleHistoryAdmin):
     list_display = (
         'description',
         'is_selectable',

@@ -8,7 +8,7 @@ from coldfront.core.resource.models import (AttributeType, Resource,
 
 
 @admin.register(AttributeType)
-class AttributeTypeAdmin(admin.ModelAdmin):
+class AttributeTypeAdmin(SimpleHistoryAdmin):
     list_display = ('name', 'created', 'modified', )
     search_fields = ('name', )
 
