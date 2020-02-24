@@ -9,6 +9,7 @@ from coldfront.core.project.models import Project
 
 class GrantFundingAgency(TimeStampedModel):
     name = models.CharField(max_length=255)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.name

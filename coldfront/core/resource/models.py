@@ -9,6 +9,7 @@ from simple_history.models import HistoricalRecords
 
 class AttributeType(TimeStampedModel):
     name = models.CharField(max_length=128, unique=True)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.name

@@ -16,7 +16,7 @@ class ProjectStatusChoiceAdmin(admin.ModelAdmin):
 
 
 @admin.register(ProjectUserRoleChoice)
-class ProjectUserRoleChoiceAdmin(admin.ModelAdmin):
+class ProjectUserRoleChoiceAdmin(SimpleHistoryAdmin):
     list_display = ('name',)
 
 
@@ -78,12 +78,16 @@ class ProjectAdminCommentInline(admin.TabularInline):
     fields = ('comment', 'author', 'created'),
     readonly_fields = ('author', 'created')
 
+admin.site.register(ProjectAdminComment, SimpleHistoryAdmin)
+
 
 class ProjectUserMessageInline(admin.TabularInline):
     model = ProjectUserMessage
     extra = 0
     fields = ('message', 'author', 'created'),
     readonly_fields = ('author', 'created')
+
+admin.site.register(ProjectUserMessage, SimpleHistoryAdmin)
 
 
 @admin.register(Project)

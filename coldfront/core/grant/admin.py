@@ -5,7 +5,7 @@ from simple_history.admin import SimpleHistoryAdmin
 
 
 @admin.register(GrantFundingAgency)
-class GrantFundingAgencyChoiceAdmin(admin.ModelAdmin):
+class GrantFundingAgencyChoiceAdmin(SimpleHistoryAdmin):
     list_display = ('name', )
 
 

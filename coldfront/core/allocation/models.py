@@ -174,6 +174,7 @@ class AllocationAdminNote(TimeStampedModel):
     allocation = models.ForeignKey(Allocation, on_delete=models.CASCADE)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     note = models.TextField()
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.note
@@ -184,6 +185,7 @@ class AllocationUserNote(TimeStampedModel):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     is_private = models.BooleanField(default=True)
     note = models.TextField()
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.note
@@ -192,6 +194,7 @@ class AllocationUserNote(TimeStampedModel):
 class AttributeType(TimeStampedModel):
     """ AttributeType. """
     name = models.CharField(max_length=64)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.name
@@ -298,6 +301,7 @@ class AllocationUser(TimeStampedModel):
 class AllocationAccount(TimeStampedModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=64, unique=True)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.name

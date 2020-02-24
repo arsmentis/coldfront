@@ -40,12 +40,16 @@ class AllocationAdminNoteInline(admin.TabularInline):
     fields = ('note', 'author', 'created'),
     readonly_fields = ('author', 'created')
 
+admin.site.register(AllocationAdminNote, SimpleHistoryAdmin)
+
 
 class AllocationUserNoteInline(admin.TabularInline):
     model = AllocationUserNote
     extra = 0
     fields = ('note', 'author', 'created'),
     readonly_fields = ('author', 'created')
+
+admin.site.register(AllocationUserNote, SimpleHistoryAdmin)
 
 
 @admin.register(Allocation)
@@ -107,7 +111,7 @@ class AllocationAdmin(SimpleHistoryAdmin):
 
 
 @admin.register(AttributeType)
-class AttributeTypeAdmin(admin.ModelAdmin):
+class AttributeTypeAdmin(SimpleHistoryAdmin):
     list_display = ('name', )
 
 

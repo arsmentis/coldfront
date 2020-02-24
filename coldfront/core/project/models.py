@@ -124,6 +124,7 @@ class ProjectAdminComment(TimeStampedModel):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     comment = models.TextField()
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.comment
@@ -133,6 +134,7 @@ class ProjectUserMessage(TimeStampedModel):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     message = models.TextField()
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.message
@@ -157,6 +159,7 @@ class ProjectReview(TimeStampedModel):
 
 class ProjectUserRoleChoice(TimeStampedModel):
     name = models.CharField(max_length=64)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.name
