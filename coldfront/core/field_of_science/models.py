@@ -1,6 +1,6 @@
 from django.db import models
 from model_utils.models import TimeStampedModel
-
+from simple_history.models import HistoricalRecords
 
 class FieldOfScience(TimeStampedModel):
     DEFAULT_PK = 149
@@ -10,6 +10,7 @@ class FieldOfScience(TimeStampedModel):
     fos_nsf_id = models.IntegerField(null=True, blank=True)
     fos_nsf_abbrev = models.CharField(max_length=10, null=True, blank=True)
     directorate_fos_id = models.IntegerField(null=True, blank=True)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.description
