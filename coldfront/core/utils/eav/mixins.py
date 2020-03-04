@@ -36,9 +36,42 @@ class AttributeTypesModelMixin(DataTypes, models.Model):
     def __str__(self):
         return self.get_datatype_display()
 
+    @property
+    def datatype_display(self):
+        # in Django 2.2, get_FOO_display() is not overrideable
+        # as such, we create a property that is
+        # that allows subclasses to override this
+
+        # for this base mixin, we simply use the implementation of get_FOO_display()
+        return self.get_datatype_display()
+
     # idempotent conversion that can be used to convert to/from a backing value
     def convert_backing_value(self, value):
         return DataTypes.converters[self.datatype](value)
+
+    # subclass may optionally implement
+    def from_display_value(self, value, *args, **kwargs):
+        return value
+
+    class AdminMixin:
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+            # make sure we use 'datatype_display' instead of 'datatype'
+            try:
+                if 'datatype' in self.list_display:
+                    self.list_display = [
+                        'datatype_display' if f == 'datatype' else f
+                        for f in self.list_display
+                    ]
+            except AttributeError as e:
+                # we should never get here, assuming Django admin operates as we expect
+                raise AssertionError('Expected attribute to exist') from e
+
+        # unfortunately we must even shim it here, to maintain a short description
+        def datatype_display(self, obj):
+            return obj.datatype_display
+        datatype_display.short_description = 'datatype'
 
 
 class AttributeValuesModelMixin(models.Model):
@@ -63,6 +96,25 @@ class AttributeValuesModelMixin(models.Model):
     def attributetype(self):
         raise NotImplementedError('Subclass must implement!')
 
+    def from_display_value(self, value, *args, **kwargs):
+        return self.attributetype.from_display_value(value, *args, **kwargs)
+
+    class AdminMixin:
+        # Django admin uses a ModelForm by default, and this does not represent
+        # properties
+
+        # as such, we implement a "shim" here to take _value and use the value setter
+        def save_model(self, request, obj, form, change, *args, **kwargs):
+            # we may also have a display value to convert from
+            # for anywhere else in the app, we can use a form/template and do input/display nicely
+            # for Django admin, however, we'd rather not edit the template
+            new_value = obj.from_display_value(obj._value)
+
+            # invoke setter
+            obj.value = new_value
+
+            super().save_model(request, obj, form, change, *args, **kwargs)
+
 
 class CustomizedBooleanChoiceAttributeTypesModelMixin(AttributeTypesModelMixin):
     # we don't want Django's typical model inheritance to apply
@@ -77,6 +129,22 @@ class CustomizedBooleanChoiceAttributeTypesModelMixin(AttributeTypesModelMixin):
         on_delete=models.SET_NULL,  # if the choice is deleted, we fall back to True/False
     )
 
+    def from_display_value(self, value, strict=False):
+        if self.custom_boolean_choice and self.datatype == DataTypes.BOOLEAN:
+            cust_bool = self.custom_boolean_choice
+            vlower = value.lower()
+
+            if vlower == cust_bool.true.lower():
+                return True
+            elif vlower == cust_bool.false.lower():
+                return False
+
+            if strict:
+                raise TypeError('Unexpected value/type')
+
+        # no-op otherwise
+        return value
+
     def clean(self, *args, **kwargs):
         if self.custom_boolean_choice:
             if not self.datatype == DataTypes.BOOLEAN:
@@ -87,3 +155,24 @@ class CustomizedBooleanChoiceAttributeTypesModelMixin(AttributeTypesModelMixin):
         if self.custom_boolean_choice:
             return '{} ({})'.format(super().__str__(), self.custom_boolean_choice)
         return super().__str__()
+
+    @property
+    def datatype_display(self):
+        # use *this* class-layer's __str__ representation
+        return CustomizedBooleanChoiceAttributeTypesModelMixin.__str__(self)
+
+    class AdminMixin(AttributeTypesModelMixin.AdminMixin):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+            # make sure we do a select_related if we would display the datatype
+            try:
+                if 'datatype_display' in self.list_display:
+                    field = 'custom_boolean_choice'
+                    if not self.list_select_related:
+                        self.list_select_related = [field]
+                    elif field not in self.list_select_related:
+                        self.list_select_related = list(self.list_select_related) + [field]
+            except AttributeError as e:
+                # we should never get here, assuming Django admin operates as we expect
+                raise AssertionError('Expected attribute to exist') from e

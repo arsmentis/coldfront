@@ -3,11 +3,35 @@ import textwrap
 from django.contrib import admin
 from simple_history.admin import SimpleHistoryAdmin
 
-from coldfront.core.project.models import (Project, ProjectAdminComment,
-                                            ProjectReview, ProjectStatusChoice,
-                                            ProjectUser, ProjectUserMessage,
-                                            ProjectUserRoleChoice,
-                                            ProjectUserStatusChoice)
+from coldfront.core.project.models import (
+    Project,
+    ProjectAdminComment,
+    ProjectAttribute,
+    ProjectAttributeType,
+    ProjectReview,
+    ProjectStatusChoice,
+    ProjectUser,
+    ProjectUserMessage,
+    ProjectUserRoleChoice,
+    ProjectUserStatusChoice,
+)
+
+
+@admin.register(ProjectAttributeType)
+class ProjectAttributeTypeAdmin(
+    ProjectAttributeType.AdminMixin,
+    SimpleHistoryAdmin,
+):
+    list_display = ('pk', 'name', 'datatype', 'is_required', 'is_unique', 'is_private', 'is_writeable_staff_only',)
+
+
+@admin.register(ProjectAttribute)
+class ProjectAttributeAdmin(
+    ProjectAttribute.AdminMixin,
+    SimpleHistoryAdmin,
+):
+    list_display = ('pk', 'project', 'project_attribute_type', 'value', 'created', 'modified',)
+    fields = ('project', 'project_attribute_type', '_value',)
 
 
 @admin.register(ProjectStatusChoice)
