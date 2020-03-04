@@ -6,6 +6,8 @@ from simple_history.admin import SimpleHistoryAdmin
 from coldfront.core.project.models import (
     Project,
     ProjectAdminComment,
+    ProjectAttribute,
+    ProjectAttributeType,
     ProjectReview,
     ProjectStatusChoice,
     ProjectUser,
@@ -13,6 +15,16 @@ from coldfront.core.project.models import (
     ProjectUserRoleChoice,
     ProjectUserStatusChoice,
 )
+
+
+@admin.register(ProjectAttributeType)
+class ProjectAttributeTypeAdmin(SimpleHistoryAdmin):
+    pass
+
+
+@admin.register(ProjectAttribute)
+class ProjectAttributeAdmin(SimpleHistoryAdmin):
+    pass
 
 
 @admin.register(ProjectStatusChoice)
