@@ -19,12 +19,13 @@ from coldfront.core.project.models import (
 
 @admin.register(ProjectAttributeType)
 class ProjectAttributeTypeAdmin(SimpleHistoryAdmin):
-    pass
+    list_display = ('pk', 'name', 'datatype', 'is_required', 'is_unique', 'is_private', 'is_writeable_staff_only',)
 
 
 @admin.register(ProjectAttribute)
 class ProjectAttributeAdmin(SimpleHistoryAdmin):
-    pass
+    list_display = ('pk', 'project', 'project_attribute_type', 'value', 'created', 'modified',)
+    fields = ('project', 'project_attribute_type', '_value',)
 
 
 @admin.register(ProjectStatusChoice)
