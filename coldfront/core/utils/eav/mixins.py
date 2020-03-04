@@ -50,6 +50,10 @@ class AttributeTypesModelMixin(DataTypes, models.Model):
         return DataTypes.converters[self.datatype](value)
 
     # subclass may optionally implement
+    def to_display_value(self, value):
+        return value
+
+    # subclass may optionally implement
     def from_display_value(self, value, *args, **kwargs):
         return value
 
@@ -96,6 +100,10 @@ class AttributeValuesModelMixin(models.Model):
     def attributetype(self):
         raise NotImplementedError('Subclass must implement!')
 
+    @property
+    def display_value(self):
+        return self.attributetype.to_display_value(self.value)
+
     def from_display_value(self, value, *args, **kwargs):
         return self.attributetype.from_display_value(value, *args, **kwargs)
 
@@ -128,6 +136,13 @@ class CustomizedBooleanChoiceAttributeTypesModelMixin(AttributeTypesModelMixin):
         default=None,
         on_delete=models.SET_NULL,  # if the choice is deleted, we fall back to True/False
     )
+
+    def to_display_value(self, value):
+        if self.custom_boolean_choice:
+            if self.datatype == DataTypes.BOOLEAN:
+                return self.custom_boolean_choice.true if value else self.custom_boolean_choice.false
+            raise TypeError('Invalid datatype to apply custom_boolean_choice')
+        return value
 
     def from_display_value(self, value, strict=False):
         if self.custom_boolean_choice and self.datatype == DataTypes.BOOLEAN:
