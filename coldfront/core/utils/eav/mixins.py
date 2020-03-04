@@ -1,4 +1,5 @@
 from . import DataTypes
+from .models import CustomizedBooleanChoice
 
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -61,3 +62,28 @@ class AttributeValuesModelMixin(models.Model):
     @property
     def attributetype(self):
         raise NotImplementedError('Subclass must implement!')
+
+
+class CustomizedBooleanChoiceAttributeTypesModelMixin(AttributeTypesModelMixin):
+    # we don't want Django's typical model inheritance to apply
+    class Meta(AttributeTypesModelMixin.Meta):
+        abstract = True  # subclasses are assumed concrete by default, so we set abstract again
+
+    custom_boolean_choice = models.ForeignKey(
+        CustomizedBooleanChoice,
+        null=True,
+        blank=True,
+        default=None,
+        on_delete=models.SET_NULL,  # if the choice is deleted, we fall back to True/False
+    )
+
+    def clean(self, *args, **kwargs):
+        if self.custom_boolean_choice:
+            if not self.datatype == DataTypes.BOOLEAN:
+                raise ValidationError('Invalid datatype to apply custom boolean choice. Select boolean or remove custom boolean choice.')
+        super().clean(*args, **kwargs)
+
+    def __str__(self):
+        if self.custom_boolean_choice:
+            return '{} ({})'.format(super().__str__(), self.custom_boolean_choice)
+        return super().__str__()
