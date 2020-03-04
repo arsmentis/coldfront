@@ -121,3 +121,19 @@ class CustomizedBooleanChoiceAttributeTypesModelMixin(AttributeTypesModelMixin):
     def datatype_display(self):
         # use *this* class-layer's __str__ representation
         return CustomizedBooleanChoiceAttributeTypesModelMixin.__str__(self)
+
+    class AdminMixin(AttributeTypesModelMixin.AdminMixin):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+            # make sure we do a select_related if we would display the datatype
+            try:
+                if 'datatype_display' in self.list_display:
+                    field = 'custom_boolean_choice'
+                    if not self.list_select_related:
+                        self.list_select_related = [field]
+                    elif field not in self.list_select_related:
+                        self.list_select_related = list(self.list_select_related) + [field]
+            except AttributeError as e:
+                # we should never get here, assuming Django admin operates as we expect
+                raise AssertionError('Expected attribute to exist') from e
