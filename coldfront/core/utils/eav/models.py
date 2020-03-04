@@ -1,5 +1,7 @@
+from django.contrib import admin
 from django.db import models
 from model_utils.models import TimeStampedModel
+from simple_history.admin import SimpleHistoryAdmin
 from simple_history.models import HistoricalRecords
 
 
@@ -16,3 +18,8 @@ class CustomizedBooleanChoice(TimeStampedModel):
         constraints = [
             models.UniqueConstraint(fields=('true', 'false'), name='unique_entry'),
         ]
+
+
+@admin.register(CustomizedBooleanChoice)
+class CustomizedBooleanChoiceAdmin(SimpleHistoryAdmin):
+    pass
