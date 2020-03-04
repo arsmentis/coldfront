@@ -3,11 +3,16 @@ import textwrap
 from django.contrib import admin
 from simple_history.admin import SimpleHistoryAdmin
 
-from coldfront.core.project.models import (Project, ProjectAdminComment,
-                                            ProjectReview, ProjectStatusChoice,
-                                            ProjectUser, ProjectUserMessage,
-                                            ProjectUserRoleChoice,
-                                            ProjectUserStatusChoice)
+from coldfront.core.project.models import (
+    Project,
+    ProjectAdminComment,
+    ProjectReview,
+    ProjectStatusChoice,
+    ProjectUser,
+    ProjectUserMessage,
+    ProjectUserRoleChoice,
+    ProjectUserStatusChoice,
+)
 
 
 @admin.register(ProjectStatusChoice)
