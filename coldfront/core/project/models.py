@@ -10,6 +10,10 @@ from simple_history.models import HistoricalRecords
 
 from coldfront.core.field_of_science.models import FieldOfScience
 from coldfront.core.utils.common import import_from_settings
+from coldfront.core.utils.eav.mixins import (
+    AttributeValuesModelMixin,
+    CustomizedBooleanChoiceAttributeTypesModelMixin,
+)
 
 PROJECT_ENABLE_PROJECT_REVIEW = import_from_settings('PROJECT_ENABLE_PROJECT_REVIEW', False)
 
@@ -190,3 +194,38 @@ class ProjectUser(TimeStampedModel):
     class Meta:
         unique_together = ('user', 'project')
         verbose_name_plural = "Project User Status"
+
+
+class ProjectAttributeType(
+    CustomizedBooleanChoiceAttributeTypesModelMixin,
+    TimeStampedModel,
+):
+    name = models.CharField(max_length=50)
+    is_required = models.BooleanField(default=False)
+    is_unique = models.BooleanField(default=False)
+    is_private = models.BooleanField(default=True)
+    is_writeable_staff_only = models.BooleanField(default=False)  # default: Managers may set the value
+
+    history = HistoricalRecords()
+
+    def __str__(self):
+        return '{} [{}]'.format(self.name, super().__str__())
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=('name', 'datatype'), name='unique_name_type'),
+        ]
+
+
+class ProjectAttribute(
+    AttributeValuesModelMixin,
+    TimeStampedModel,
+):
+    project_attribute_type = models.ForeignKey(ProjectAttributeType, on_delete=models.CASCADE,)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+
+    history = HistoricalRecords()
+
+    @property
+    def attributetype(self):
+        return self.project_attribute_type
