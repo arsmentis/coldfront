@@ -49,6 +49,10 @@ class AttributeTypesModelMixin(DataTypes, models.Model):
     def convert_backing_value(self, value):
         return DataTypes.converters[self.datatype](value)
 
+    # subclass may optionally implement
+    def from_display_value(self, value, *args, **kwargs):
+        return value
+
     class AdminMixin:
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
@@ -92,14 +96,22 @@ class AttributeValuesModelMixin(models.Model):
     def attributetype(self):
         raise NotImplementedError('Subclass must implement!')
 
+    def from_display_value(self, value, *args, **kwargs):
+        return self.attributetype.from_display_value(value, *args, **kwargs)
+
     class AdminMixin:
         # Django admin uses a ModelForm by default, and this does not represent
         # properties
 
         # as such, we implement a "shim" here to take _value and use the value setter
         def save_model(self, request, obj, form, change, *args, **kwargs):
+            # we may also have a display value to convert from
+            # for anywhere else in the app, we can use a form/template and do input/display nicely
+            # for Django admin, however, we'd rather not edit the template
+            new_value = obj.from_display_value(obj._value)
+
             # invoke setter
-            obj.value = obj._value
+            obj.value = new_value
 
             super().save_model(request, obj, form, change, *args, **kwargs)
 
@@ -116,6 +128,22 @@ class CustomizedBooleanChoiceAttributeTypesModelMixin(AttributeTypesModelMixin):
         default=None,
         on_delete=models.SET_NULL,  # if the choice is deleted, we fall back to True/False
     )
+
+    def from_display_value(self, value, strict=False):
+        if self.custom_boolean_choice and self.datatype == DataTypes.BOOLEAN:
+            cust_bool = self.custom_boolean_choice
+            vlower = value.lower()
+
+            if vlower == cust_bool.true.lower():
+                return True
+            elif vlower == cust_bool.false.lower():
+                return False
+
+            if strict:
+                raise TypeError('Unexpected value/type')
+
+        # no-op otherwise
+        return value
 
     def clean(self, *args, **kwargs):
         if self.custom_boolean_choice:
