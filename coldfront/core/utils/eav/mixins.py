@@ -92,6 +92,17 @@ class AttributeValuesModelMixin(models.Model):
     def attributetype(self):
         raise NotImplementedError('Subclass must implement!')
 
+    class AdminMixin:
+        # Django admin uses a ModelForm by default, and this does not represent
+        # properties
+
+        # as such, we implement a "shim" here to take _value and use the value setter
+        def save_model(self, request, obj, form, change, *args, **kwargs):
+            # invoke setter
+            obj.value = obj._value
+
+            super().save_model(request, obj, form, change, *args, **kwargs)
+
 
 class CustomizedBooleanChoiceAttributeTypesModelMixin(AttributeTypesModelMixin):
     # we don't want Django's typical model inheritance to apply

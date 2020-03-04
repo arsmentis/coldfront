@@ -26,7 +26,10 @@ class ProjectAttributeTypeAdmin(
 
 
 @admin.register(ProjectAttribute)
-class ProjectAttributeAdmin(SimpleHistoryAdmin):
+class ProjectAttributeAdmin(
+    ProjectAttribute.AdminMixin,
+    SimpleHistoryAdmin,
+):
     list_display = ('pk', 'project', 'project_attribute_type', 'value', 'created', 'modified',)
     fields = ('project', 'project_attribute_type', '_value',)
 
