@@ -11,8 +11,8 @@ from simple_history.models import HistoricalRecords
 from coldfront.core.field_of_science.models import FieldOfScience
 from coldfront.core.utils.common import import_from_settings
 from coldfront.core.utils.eav.mixins import (
-    AttributeTypesModelMixin,
     AttributeValuesModelMixin,
+    CustomizedBooleanChoiceAttributeTypesModelMixin,
 )
 
 PROJECT_ENABLE_PROJECT_REVIEW = import_from_settings('PROJECT_ENABLE_PROJECT_REVIEW', False)
@@ -197,7 +197,7 @@ class ProjectUser(TimeStampedModel):
 
 
 class ProjectAttributeType(
-    AttributeTypesModelMixin,
+    CustomizedBooleanChoiceAttributeTypesModelMixin,
     TimeStampedModel,
 ):
     name = models.CharField(max_length=50)
