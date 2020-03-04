@@ -18,7 +18,10 @@ from coldfront.core.project.models import (
 
 
 @admin.register(ProjectAttributeType)
-class ProjectAttributeTypeAdmin(SimpleHistoryAdmin):
+class ProjectAttributeTypeAdmin(
+    ProjectAttributeType.AdminMixin,
+    SimpleHistoryAdmin,
+):
     list_display = ('pk', 'name', 'datatype', 'is_required', 'is_unique', 'is_private', 'is_writeable_staff_only',)
 
 

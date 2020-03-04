@@ -36,9 +36,38 @@ class AttributeTypesModelMixin(DataTypes, models.Model):
     def __str__(self):
         return self.get_datatype_display()
 
+    @property
+    def datatype_display(self):
+        # in Django 2.2, get_FOO_display() is not overrideable
+        # as such, we create a property that is
+        # that allows subclasses to override this
+
+        # for this base mixin, we simply use the implementation of get_FOO_display()
+        return self.get_datatype_display()
+
     # idempotent conversion that can be used to convert to/from a backing value
     def convert_backing_value(self, value):
         return DataTypes.converters[self.datatype](value)
+
+    class AdminMixin:
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+            # make sure we use 'datatype_display' instead of 'datatype'
+            try:
+                if 'datatype' in self.list_display:
+                    self.list_display = [
+                        'datatype_display' if f == 'datatype' else f
+                        for f in self.list_display
+                    ]
+            except AttributeError as e:
+                # we should never get here, assuming Django admin operates as we expect
+                raise AssertionError('Expected attribute to exist') from e
+
+        # unfortunately we must even shim it here, to maintain a short description
+        def datatype_display(self, obj):
+            return obj.datatype_display
+        datatype_display.short_description = 'datatype'
 
 
 class AttributeValuesModelMixin(models.Model):
@@ -87,3 +116,8 @@ class CustomizedBooleanChoiceAttributeTypesModelMixin(AttributeTypesModelMixin):
         if self.custom_boolean_choice:
             return '{} ({})'.format(super().__str__(), self.custom_boolean_choice)
         return super().__str__()
+
+    @property
+    def datatype_display(self):
+        # use *this* class-layer's __str__ representation
+        return CustomizedBooleanChoiceAttributeTypesModelMixin.__str__(self)
