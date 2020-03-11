@@ -10,6 +10,12 @@ urlpatterns = [
     path('archived/', project_views.ProjectArchivedListView.as_view(), name='project-archived-list'),
     path('create/', project_views.ProjectCreateView.as_view(), name='project-create'),
     path('<int:pk>/update/', project_views.ProjectUpdateView.as_view(), name='project-update'),
+
+    # TODO: link to correct views (when implemented)
+    path('<int:pk>/add-attribute/', project_views.NYIView.as_view(), name='project-add-attribute'),
+    path('<int:pk>/remove-attributes/', project_views.NYIView.as_view(), name='project-remove-attributes'),
+    path('<int:pk>/attribute/<int:project_attribute_pk>', project_views.NYIView.as_view(), name='project-attribute-detail'),
+
     path('<int:pk>/add-users-search/', project_views.ProjectAddUsersSearchView.as_view(), name='project-add-users-search'),
     path('<int:pk>/add-users-search-results/', project_views.ProjectAddUsersSearchResultsView.as_view(), name='project-add-users-search-results'),
     path('<int:pk>/add-users/', project_views.ProjectAddUsersView.as_view(), name='project-add-users'),

@@ -92,6 +92,11 @@ class ProjectDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         else:
             context['is_allowed_to_update_project'] = False
 
+        # can the user possibly update anything? (this is used to show fields conditionally)
+        context['user_possibly_can_edit'] = {
+            'attributes': context['is_allowed_to_update_project'] or self.request.user.is_staff,
+        }
+
         # Only show 'Active Users'
         project_users = self.object.projectuser_set.filter(
             status__name='Active').order_by('user__username')
@@ -125,6 +130,18 @@ class ProjectDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
             project=self.object, status__name__in=['Active', 'Pending'])
         context['allocations'] = allocations
         context['project_users'] = project_users
+        # TODO: refine logic (~permissions) here + make sure required/unassigned gets annotated-in or such
+        context['attributes'] = self.object.projectattribute_set.all(
+            ).select_related(
+                'project_attribute_type',
+                'project_attribute_type__custom_boolean_choice',
+            ).order_by(
+                '-project_attribute_type__is_required',
+                'project_attribute_type__is_private',
+                '-project_attribute_type__is_unique',
+                '-project_attribute_type__is_writeable_staff_only',
+                'project_attribute_type__name',
+            )
         context['ALLOCATION_ENABLE_ALLOCATION_RENEWAL'] = ALLOCATION_ENABLE_ALLOCATION_RENEWAL
         return context
 
@@ -1084,3 +1101,7 @@ class ProjectReivewEmailView(LoginRequiredMixin, UserPassesTestMixin, FormView):
 
     def get_success_url(self):
         return reverse('project-review-list')
+
+
+class NYIView(View):
+    pass

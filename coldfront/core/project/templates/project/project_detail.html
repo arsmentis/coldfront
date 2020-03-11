@@ -79,6 +79,76 @@ Project Detail
 <!-- End Project Heading -->
 
 
+<!-- Start Project Attributes -->
+<div class="card mb-3">
+  <div class="card-header">
+    <h4 class="d-inline">
+      <i class="fas fa-info-circle" aria-hidden="true"></i> <a name="attributes">Attributes</a>
+    </h4>
+    <span class="badge badge-secondary">{{attributes.count}}</span>
+    <div class="float-right">
+      {% if project.status.name != 'Archived' and user_possibly_can_edit.attributes %}
+        <a class="btn btn-success" href="{% url 'project-add-attribute' project.id %}" role="button">
+          <i class="fas fa-plus" aria-hidden="true"></i> Add Attribute
+        </a>
+        <a class="btn btn-danger" href="{% url 'project-remove-attributes' project.id %}" role="button">
+          <i class="fas fa-minus" aria-hidden="true"></i> Remove Attributes
+        </a>
+      {% endif %}
+    </div>
+  </div>
+  <div class="card-body">
+    {% if attributes %}
+      <div class="table-responsive">
+        <table class="table table-bordered table-sm">
+          <thead>
+            <tr>
+              <th scope="col">Attribute</th>
+              <th scope="col">Value</th>
+              {% if user_possibly_can_edit.attributes %}
+              <th scope="col">Edit</th>
+              {% endif %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for attribute in attributes %}
+              {% with attribute.attributetype.is_writeable_staff_only as is_writeable_staff_only %}
+                {% if attribute.attributetype.is_private %}
+                <tr style="background-color:#eee">
+                  <td><i class="fas fa-lock" aria-hidden="true"></i> {{attribute.attributetype.name}}</td>
+                {% else %}
+                <tr>
+                  <td>{{attribute.attributetype.name}}</td>
+                {% endif %}
+                  <td>{{attribute.display_value}}</td>
+                  {% if user_possibly_can_edit.attributes %}
+                  <td>
+                    {% if is_writeable_staff_only and user.is_staff or not is_writeable_staff_only and is_allowed_to_update_project %}
+                    <a href="{% url 'project-attribute-detail' project.pk attribute.pk %}">
+                      <i class="fas fa-edit"></i>
+                    </a>
+                    {# {% elif <not editable> %} #}
+                      {# TODO: would be good to have a red-line-through-circle-NO icon here, if not editable #}
+                    {% endif %}
+                  </td>
+                  {% endif %}
+                </tr>
+              {% endwith %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="alert alert-info" role="alert">
+        <i class="fas fa-info-circle"></i> There are no attributes to display.
+      </div>
+    {% endif %}
+  </div>
+</div>
+<!-- End Project Attributes -->
+
+
+
 <!-- Start Project Users -->
 <div class="card mb-3">
   <div class="card-header">
