@@ -42,6 +42,11 @@ from coldfront.core.user.forms import UserSearchForm
 from coldfront.core.user.utils import CombinedUserSearch
 from coldfront.core.utils.common import get_domain_url, import_from_settings
 from coldfront.core.utils.mail import send_email, send_email_template
+from coldfront.core.utils.mixins import (
+    UserActiveManagerOrHigherMixin,
+    ChangesOnlyOnActiveProjectMixin,
+    ProjectInContextMixin,
+)
 
 EMAIL_ENABLED = import_from_settings('EMAIL_ENABLED', False)
 ALLOCATION_ENABLE_ALLOCATION_RENEWAL = import_from_settings(
