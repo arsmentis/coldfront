@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Q
-from django.forms import formset_factory
+from django.forms import formset_factory, HiddenInput
 from django.http import (HttpResponse, HttpResponseForbidden,
                          HttpResponseRedirect)
 from django.shortcuts import get_object_or_404, redirect, render
@@ -34,6 +34,7 @@ from coldfront.core.project.forms import (ProjectAddUserForm,
                                           ProjectUserUpdateForm)
 from coldfront.core.project.models import (
     Project,
+    ProjectAttribute,
     ProjectReview,
     ProjectReviewStatusChoice,
     ProjectStatusChoice,
@@ -46,7 +47,7 @@ from coldfront.core.user.forms import UserSearchForm
 from coldfront.core.user.utils import CombinedUserSearch
 from coldfront.core.utils.common import get_domain_url, import_from_settings
 from coldfront.core.utils.mail import send_email, send_email_template
-from coldfront.core.utils.mixins import (
+from coldfront.core.utils.mixins.views import (
     UserActiveManagerOrHigherMixin,
     ChangesOnlyOnActiveProjectMixin,
     ProjectInContextMixin,
@@ -1110,6 +1111,40 @@ class ProjectReivewEmailView(LoginRequiredMixin, UserPassesTestMixin, FormView):
 
     def get_success_url(self):
         return reverse('project-review-list')
+
+
+class ProjectAttributeCreateView(
+        UserActiveManagerOrHigherMixin,
+        ChangesOnlyOnActiveProjectMixin,
+        ProjectInContextMixin,
+        CreateView):
+    model = ProjectAttribute
+    fields = '__all__'
+    template_name = 'project/project_projectattribute_create.html'
+
+    def test_func(self):
+        """ UserPassesTestMixin Tests, extended """
+
+        if self.request.user.is_staff:
+            return True
+        return super().test_func()
+
+    def get_initial(self):
+        initial = super().get_initial()
+        project_pk = self.kwargs.get('project_pk')
+        initial['project'] = project_pk
+        return initial
+
+    ### TODO: below
+    def get_form(self, form_class=None):
+        # remove project from the form - we'll add it in upon submit
+        form = super().get_form(form_class)
+        form.fields['project'].widget = HiddenInput()
+        return form
+
+
+    def get_success_url(self):  # TODO: might not work
+        return reverse('project-detail', kwargs={'pk': self.get_context_data()['project'].pk})
 
 
 class NYIView(View):

@@ -12,7 +12,7 @@ urlpatterns = [
     path('<int:pk>/update/', project_views.ProjectUpdateView.as_view(), name='project-update'),
 
     # TODO: link to correct views (when implemented)
-    path('<int:pk>/add-attribute/', project_views.NYIView.as_view(), name='project-add-attribute'),
+    path('<int:pk>/add-attribute/', project_views.ProjectAttributeCreateView.as_view(), name='project-add-attribute'),
     path('<int:pk>/remove-attributes/', project_views.NYIView.as_view(), name='project-remove-attributes'),
     path('<int:pk>/attribute/<int:project_attribute_pk>', project_views.NYIView.as_view(), name='project-attribute-detail'),
 
