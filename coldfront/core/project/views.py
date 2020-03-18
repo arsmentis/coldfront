@@ -32,11 +32,15 @@ from coldfront.core.project.forms import (ProjectAddUserForm,
                                           ProjectReviewEmailForm,
                                           ProjectReviewForm, ProjectSearchForm,
                                           ProjectUserUpdateForm)
-from coldfront.core.project.models import (Project, ProjectReview,
-                                           ProjectReviewStatusChoice,
-                                           ProjectStatusChoice, ProjectUser,
-                                           ProjectUserRoleChoice,
-                                           ProjectUserStatusChoice)
+from coldfront.core.project.models import (
+    Project,
+    ProjectReview,
+    ProjectReviewStatusChoice,
+    ProjectStatusChoice,
+    ProjectUser,
+    ProjectUserRoleChoice,
+    ProjectUserStatusChoice,
+)
 from coldfront.core.publication.models import Publication
 from coldfront.core.user.forms import UserSearchForm
 from coldfront.core.user.utils import CombinedUserSearch
