@@ -1142,8 +1142,15 @@ class ProjectAttributeCreateView(
         form.fields['project'].widget = HiddenInput()
         return form
 
+#    def post(self, request, *args, **kwargs):
+#        # make mutable
+#        request.POST = dict(request.POST)
+#        # add in project
+#        request.POST['project'] = self.kwargs.get('project_pk')
+#        return super().post(request, *args, **kwargs)
 
     def get_success_url(self):  # TODO: might not work
+        # return reverse('project-detail', kwargs={'pk': self.kwargs.get('project_pk')})
         return reverse('project-detail', kwargs={'pk': self.get_context_data()['project'].pk})
 
 
