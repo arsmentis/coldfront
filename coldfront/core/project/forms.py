@@ -127,11 +127,11 @@ class ProjectReviewEmailForm(forms.Form):
 
 
 class ProjectAttributeModelForm(forms.ModelForm):
-    value = models.TextField().formfield()
-
     class Meta:
         model = ProjectAttribute
         exclude = (
             '_value',
             'project',
         )
+
+    value = models.TextField().formfield()
