@@ -1,9 +1,10 @@
 import datetime
 
 from django import forms
+from django.db import models
 from django.shortcuts import get_object_or_404
 
-from coldfront.core.project.models import (Project, ProjectReview,
+from coldfront.core.project.models import (Project, ProjectAttribute, ProjectReview,
                                            ProjectUserRoleChoice)
 from coldfront.core.utils.common import import_from_settings
 
@@ -123,3 +124,14 @@ class ProjectReviewEmailForm(forms.Form):
             project_review_obj.project.pi.first_name, project_review_obj.project.pi.last_name, EMAIL_DIRECTOR_PENDING_PROJECT_REVIEW_EMAIL)
         self.fields['cc'].initial = ', '.join(
             [EMAIL_DIRECTOR_EMAIL_ADDRESS] + EMAIL_ADMIN_LIST)
+
+
+class ProjectAttributeModelForm(forms.ModelForm):
+    value = models.TextField().formfield()
+
+    class Meta:
+        model = ProjectAttribute
+        exclude = (
+            '_value',
+            'project',
+        )
