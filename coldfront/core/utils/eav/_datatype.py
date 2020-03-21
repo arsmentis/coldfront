@@ -50,7 +50,10 @@ class DataTypes:
         @staticmethod
         def FLOAT(value):
             if isinstance(value, str):
-                converted = literal_eval(value)
+                try:
+                    converted = literal_eval(value)
+                except SyntaxError as e:
+                    raise TypeError('Unexpected value/type') from e
                 if isinstance(converted, (int, float)):
                     return converted
             elif isinstance(value, (int, float)):
