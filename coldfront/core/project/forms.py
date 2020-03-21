@@ -1,6 +1,7 @@
 import datetime
 
 from django import forms
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.shortcuts import get_object_or_404
 
@@ -135,3 +136,12 @@ class ProjectAttributeModelForm(forms.ModelForm):
         )
 
     value = models.TextField().formfield()
+
+    def full_clean(self):
+        super().full_clean()
+
+        try:
+            # value is a property, not a field, so we must set it ourselves here
+            self.instance.value = self.cleaned_data['value']
+        except ValidationError as e:
+            self.add_error('value', e)
