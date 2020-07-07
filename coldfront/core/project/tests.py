@@ -16,7 +16,6 @@ class TestProjectAttributeModelForm(TestCase):
         def __init__(self):
             self.attribute_type = ProjectAttributeTypeFactory()
 
-
     def _arbitrary_bound_form(self):
         form_data = {
             'project_attribute_type': self.data.attribute_type.pk,
@@ -75,3 +74,6 @@ class TestProjectAttributeModelForm(TestCase):
 
                 self.assertFalse(form.is_valid())
                 self.assertNotEqual(len(form.errors), 0)
+
+    def test_custom_boolean(self):  # TODO
+        pass
